@@ -1,0 +1,1 @@
+﻿At line:1 char:88+ ... -part1.svg' -Raw; if ( -match '(?s)<svg[^>]*>(.*)</svg>') { [0] } els ...+                                                                  ~Missing type name after '['.    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordEx    ception    + FullyQualifiedErrorId : MissingTypename 
