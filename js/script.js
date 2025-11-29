@@ -225,20 +225,34 @@ document.addEventListener('DOMContentLoaded', function() {
 // Navbar Scroll Effect
 // ===================================
 
-window.addEventListener('scroll', function() {
+// Throttle helper using requestAnimationFrame
+function throttleRAF(fn) {
+    let busy = false;
+    return function(...args) {
+        if (busy) return;
+        busy = true;
+        requestAnimationFrame(() => {
+            fn.apply(this, args);
+            busy = false;
+        });
+    };
+}
+
+window.addEventListener('scroll', throttleRAF(function() {
     const navbar = document.querySelector('.navbar');
+    if (!navbar) return;
     if (window.scrollY > 50) {
         navbar.classList.add('scrolled');
     } else {
         navbar.classList.remove('scrolled');
     }
-});
+}));
 
 // ===================================
 // Active Navigation Link on Scroll
 // ===================================
 
-window.addEventListener('scroll', function() {
+window.addEventListener('scroll', throttleRAF(function() {
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
     
@@ -260,7 +274,7 @@ window.addEventListener('scroll', function() {
             link.classList.add('active');
         }
     });
-});
+}));
 
 // ===================================
 // Contact Form Handling
@@ -496,9 +510,14 @@ document.addEventListener('DOMContentLoaded', function() {
 function initParallaxEffect() {
     const heroSection = document.querySelector('.hero-section');
     if (!heroSection) return;
-    
-    // Scroll parallax
-    window.addEventListener('scroll', function() {
+    // Respect user preference for reduced motion
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    // Disable parallax on small screens
+    if (window.innerWidth <= 768) return;
+
+    // Scroll parallax (throttled)
+    window.addEventListener('scroll', throttleRAF(function() {
         const scrolled = window.pageYOffset;
         const heroContent = document.querySelector('.hero-overlay');
         
@@ -510,21 +529,23 @@ function initParallaxEffect() {
             const decorations = document.querySelectorAll('.floating-tent, .floating-swirl, .floating-shape');
             decorations.forEach((el, index) => {
                 const speed = (index % 3 + 1) * 0.1;
-                el.style.transform += ` translateY(${scrolled * speed}px)`;
+                el.style.transform = `translateY(${scrolled * speed}px)`;
             });
         }
-    });
+    }));
     
     // Mouse movement parallax for floating elements (desktop only)
     if (window.innerWidth > 768) {
         let mouseX = 0, mouseY = 0;
         let targetX = 0, targetY = 0;
-        
-        heroSection.addEventListener('mousemove', function(e) {
-            const rect = heroSection.getBoundingClientRect();
-            targetX = ((e.clientX - rect.left) / rect.width - 0.5) * 30;
-            targetY = ((e.clientY - rect.top) / rect.height - 0.5) * 30;
-        });
+        // Only enable mouse parallax if user hasn't requested reduced motion
+        if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            heroSection.addEventListener('mousemove', function(e) {
+                const rect = heroSection.getBoundingClientRect();
+                targetX = ((e.clientX - rect.left) / rect.width - 0.5) * 30;
+                targetY = ((e.clientY - rect.top) / rect.height - 0.5) * 30;
+            });
+        }
         
         // Smooth interpolation for mouse movement
         function updateMouseParallax() {
