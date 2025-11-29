@@ -8,18 +8,18 @@ const CACHE_VERSION = 'v1';
 const CACHE_NAME = `rpr-static-${CACHE_VERSION}`;
 
 const CORE_ASSETS = [
-  '/',
-  '/index.html',
-  '/css/custom.css',
-  '/css/local-fonts.css',
-  '/js/script.js',
-  '/images/hero-wedding-table-1920.webp',
-  '/images/hero-wedding-table-1200.webp',
-  '/images/hero-wedding-table-800.webp',
-  '/images/Logo-Regal.png'
+  './',
+  './index.html',
+  './css/custom.css',
+  './css/local-fonts.css',
+  './js/script.js',
+  './images/hero-wedding-table-1920.webp',
+  './images/hero-wedding-table-1200.webp',
+  './images/hero-wedding-table-800.webp',
+  './images/Logo-Regal.png'
 ];
 // Add offline page to core assets
-CORE_ASSETS.push('/offline.html');
+CORE_ASSETS.push('./offline.html');
 
 self.addEventListener('install', event => {
   self.skipWaiting();
@@ -61,7 +61,7 @@ async function networkFirst(request) {
     if (cached) return cached;
     // If navigation request and nothing cached, serve offline fallback
     if (request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html')) {
-      const fallback = await cache.match('/offline.html');
+      const fallback = await cache.match('./offline.html');
       if (fallback) return fallback;
     }
     return Response.error();

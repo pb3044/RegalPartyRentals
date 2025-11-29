@@ -45,8 +45,8 @@
     
     <!-- Google Fonts - Elegant Typography -->
     <!-- Local fonts (preloaded for performance) -->
-    <link rel="preload" href="fonts/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQ.ttf" as="font" type="font/ttf" crossorigin>
-    <link rel="preload" href="fonts/pxiByp8kv8JHgFVrLDz8V1s.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="fonts/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQ.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+    <link rel="preload" href="fonts/pxiByp8kv8JHgFVrLDz8V1s.ttf" as="font" type="font/ttf" crossorigin="anonymous">
     <link rel="preload" href="css/local-fonts.css" as="style" onload="this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="css/local-fonts.css"></noscript>
     
@@ -2252,7 +2252,7 @@
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             // Only register on secure contexts (localhost or https)
-            navigator.serviceWorker.register('/sw.js').then(function(reg) {
+            navigator.serviceWorker.register('./sw.js').then(function(reg) {
                 console.log('ServiceWorker registered:', reg.scope);
             }).catch(function(err) {
                 console.warn('ServiceWorker registration failed:', err);
