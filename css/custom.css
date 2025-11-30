@@ -1421,6 +1421,7 @@ footer a:hover {
     bottom: 0;
     background: var(--gradient-primary);
     opacity: 0.05;
+    pointer-events: none;
 }
 
 .aggregate-rating .display-1 {
