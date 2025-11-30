@@ -277,8 +277,20 @@ window.addEventListener('scroll', throttleRAF(function() {
 }));
 
 // ===================================
-// Contact Form Handling
+// Contact Form Handling with EmailJS
 // ===================================
+
+// Initialize EmailJS
+// IMPORTANT: Replace these values with your EmailJS credentials
+// Get them from: https://dashboard.emailjs.com/admin/integration
+const EMAILJS_SERVICE_ID = 'service_le5bias'; // Replace with your EmailJS service ID
+const EMAILJS_TEMPLATE_ID = 'template_g4dpyg9';  // Replace with your EmailJS template ID
+const EMAILJS_PUBLIC_KEY = 'VX5dplNyGfKt_KxxH'; // Replace with your EmailJS public key
+
+// Initialize EmailJS if the library is loaded
+if (typeof emailjs !== 'undefined') {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+}
 
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
@@ -314,24 +326,69 @@ if (contactForm) {
             return;
         }
         
-        // Here you would typically send this data to a server
-        // For now, we'll show a success message and log the data
-        console.log('Form submission:', {
-            name,
-            email,
-            phone,
-            eventDate,
-            location,
-            eventType,
-            guestCount,
-            message
-        });
+        // Location validation
+        if (!location) {
+            alert('Please select an event location.');
+            return;
+        }
         
-        // Show success message
-        alert('Thank you for your inquiry! We will contact you shortly at ' + email + '.');
+        // Disable submit button to prevent double submission
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Sending...';
         
-        // Reset form
-        this.reset();
+        // Prepare email template parameters
+        const templateParams = {
+            name: name, // For template compatibility (used in first line)
+            from_name: name,
+            from_email: email,
+            phone: phone,
+            event_date: eventDate || 'Not specified',
+            location: location,
+            event_type: eventType || 'Not specified',
+            guest_count: guestCount || 'Not specified',
+            message: message,
+            to_email: 'info@regalpartyrentals.ca' // Your business email
+        };
+        
+        // Send email using EmailJS
+        if (typeof emailjs !== 'undefined' && EMAILJS_SERVICE_ID !== 'YOUR_SERVICE_ID') {
+            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+                .then(function(response) {
+                    console.log('Email sent successfully!', response.status, response.text);
+                    
+                    // Show success message
+                    alert('Thank you for your inquiry! We have received your message and will contact you shortly at ' + email + '.');
+                    
+                    // Reset form
+                    contactForm.reset();
+                    
+                    // Re-enable submit button
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalButtonText;
+                }, function(error) {
+                    console.error('Email sending failed:', error);
+                    
+                    // Show error message
+                    alert('Sorry, there was an error sending your message. Please try again or contact us directly at info@regalpartyrentals.ca');
+                    
+                    // Re-enable submit button
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalButtonText;
+                });
+        } else {
+            // Fallback if EmailJS is not configured
+            console.warn('EmailJS not configured. Please set up EmailJS credentials.');
+            console.log('Form submission data:', templateParams);
+            
+            // Show message that email functionality needs to be configured
+            alert('Email service is not configured. Please contact us directly at info@regalpartyrentals.ca or (250) 555-1234');
+            
+            // Re-enable submit button
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
+        }
     });
 }
 
