@@ -1,12 +1,17 @@
 // ===================================
-// SVG Logo Sequential Animation Setup (Optimized)
+// SVG Logo Sequential Animation Setup (Lazy Loaded)
 // ===================================
 
-document.addEventListener('DOMContentLoaded', function() {
+// Lazy load SVG animation only when logo is visible
+let svgAnimationInitialized = false;
+
+function initSVGAnimation() {
+    if (svgAnimationInitialized) return;
+    svgAnimationInitialized = true;
+    
     const svgLogo = document.querySelector('.navbar-logo-svg');
     if (!svgLogo) return;
     
-    // Wait for SVG to be fully rendered
     requestAnimationFrame(() => {
         const viewBox = svgLogo.getAttribute('viewBox');
         if (!viewBox) return;
@@ -139,6 +144,30 @@ document.addEventListener('DOMContentLoaded', function() {
             el.style.setProperty('display', 'block');
         });
     });
+}
+
+// Observe navbar logo for lazy loading
+document.addEventListener('DOMContentLoaded', function() {
+    const svgLogo = document.querySelector('.navbar-logo-svg');
+    if (svgLogo) {
+        const logoObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    initSVGAnimation();
+                    logoObserver.unobserve(entry.target);
+                }
+            });
+        }, { rootMargin: '50px' });
+        
+        logoObserver.observe(svgLogo);
+        
+        // Fallback: initialize after 2 seconds if still not visible
+        setTimeout(() => {
+            if (!svgAnimationInitialized) {
+                initSVGAnimation();
+            }
+        }, 2000);
+    }
 });
 
 // ===================================
@@ -238,26 +267,29 @@ function throttleRAF(fn) {
     };
 }
 
+// ===================================
+// Combined Scroll Handlers (Optimized)
+// ===================================
+
+// Single scroll handler to reduce main-thread work
 window.addEventListener('scroll', throttleRAF(function() {
     const navbar = document.querySelector('.navbar');
-    if (!navbar) return;
-    if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
+    const scrollY = window.pageYOffset;
+    
+    // Update navbar scrolled state
+    if (navbar) {
+        if (scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
     }
-}));
-
-// ===================================
-// Active Navigation Link on Scroll
-// ===================================
-
-window.addEventListener('scroll', throttleRAF(function() {
+    
+    // Update active navigation link
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
-    
     let current = '';
-    const scrollPosition = window.pageYOffset + 200;
+    const scrollPosition = scrollY + 200;
     
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
@@ -277,27 +309,68 @@ window.addEventListener('scroll', throttleRAF(function() {
 }));
 
 // ===================================
-// Contact Form Handling with EmailJS
+// Contact Form Handling with EmailJS (Lazy Loaded)
 // ===================================
 
-// Initialize EmailJS
-// IMPORTANT: Replace these values with your EmailJS credentials
-// Get them from: https://dashboard.emailjs.com/admin/integration
-const EMAILJS_SERVICE_ID = 'service_le5bias'; // Replace with your EmailJS service ID
-const EMAILJS_TEMPLATE_ID = 'template_g4dpyg9';  // Replace with your EmailJS template ID
-const EMAILJS_PUBLIC_KEY = 'VX5dplNyGfKt_KxxH'; // Replace with your EmailJS public key
+// EmailJS configuration
+const EMAILJS_SERVICE_ID = 'service_le5bias';
+const EMAILJS_TEMPLATE_ID = 'template_g4dpyg9';
+const EMAILJS_PUBLIC_KEY = 'VX5dplNyGfKt_KxxH';
 
-// Initialize EmailJS if the library is loaded
-if (typeof emailjs !== 'undefined') {
-    emailjs.init(EMAILJS_PUBLIC_KEY);
+// Lazy load EmailJS when contact form is visible
+let emailjsLoaded = false;
+let emailjsLoading = false;
+
+function loadEmailJS() {
+    if (emailjsLoaded || emailjsLoading) return;
+    emailjsLoading = true;
+    
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+    script.async = true;
+    script.onload = function() {
+        if (typeof emailjs !== 'undefined') {
+            emailjs.init(EMAILJS_PUBLIC_KEY);
+            emailjsLoaded = true;
+            emailjsLoading = false;
+            initContactForm();
+        }
+    };
+    script.onerror = function() {
+        emailjsLoading = false;
+        console.warn('Failed to load EmailJS');
+        initContactForm(); // Still init form for fallback
+    };
+    document.head.appendChild(script);
 }
 
-const contactForm = document.getElementById('contactForm');
-if (contactForm) {
+// Observe contact form section for lazy loading
+const contactSectionObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+        if (entry.isIntersecting && !emailjsLoaded && !emailjsLoading) {
+            loadEmailJS();
+            contactSectionObserver.unobserve(entry.target);
+        }
+    });
+}, { rootMargin: '200px' }); // Load 200px before form is visible
+
+document.addEventListener('DOMContentLoaded', function() {
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+        contactSectionObserver.observe(contactSection);
+    } else {
+        // If section not found, load immediately
+        loadEmailJS();
+    }
+});
+
+function initContactForm() {
+    const contactForm = document.getElementById('contactForm');
+    if (!contactForm) return;
+    
     contactForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Get form values
         const name = document.getElementById('name').value.trim();
         const email = document.getElementById('email').value.trim();
         const phone = document.getElementById('phone').value.trim();
@@ -307,40 +380,34 @@ if (contactForm) {
         const guestCount = document.getElementById('guestCount').value;
         const message = document.getElementById('message').value.trim();
         
-        // Basic validation
         if (!name || !email || !phone || !message) {
             alert('Please fill in all required fields marked with *.');
             return;
         }
         
-        // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             alert('Please enter a valid email address.');
             return;
         }
         
-        // Phone validation (basic - just check it's not empty)
         if (phone.length < 10) {
             alert('Please enter a valid phone number.');
             return;
         }
         
-        // Location validation
         if (!location) {
             alert('Please select an event location.');
             return;
         }
         
-        // Disable submit button to prevent double submission
         const submitButton = this.querySelector('button[type="submit"]');
         const originalButtonText = submitButton.textContent;
         submitButton.disabled = true;
         submitButton.textContent = 'Sending...';
         
-        // Prepare email template parameters
         const templateParams = {
-            name: name, // For template compatibility (used in first line)
+            name: name,
             from_name: name,
             from_email: email,
             phone: phone,
@@ -349,43 +416,26 @@ if (contactForm) {
             event_type: eventType || 'Not specified',
             guest_count: guestCount || 'Not specified',
             message: message,
-            to_email: 'info@regalpartyrentals.ca' // Your business email
+            to_email: 'info@regalpartyrentals.ca'
         };
         
-        // Send email using EmailJS
-        if (typeof emailjs !== 'undefined' && EMAILJS_SERVICE_ID !== 'YOUR_SERVICE_ID') {
+        if (emailjsLoaded && typeof emailjs !== 'undefined') {
             emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
                 .then(function(response) {
                     console.log('Email sent successfully!', response.status, response.text);
-                    
-                    // Show success message
                     alert('Thank you for your inquiry! We have received your message and will contact you shortly at ' + email + '.');
-                    
-                    // Reset form
                     contactForm.reset();
-                    
-                    // Re-enable submit button
                     submitButton.disabled = false;
                     submitButton.textContent = originalButtonText;
                 }, function(error) {
                     console.error('Email sending failed:', error);
-                    
-                    // Show error message
                     alert('Sorry, there was an error sending your message. Please try again or contact us directly at info@regalpartyrentals.ca');
-                    
-                    // Re-enable submit button
                     submitButton.disabled = false;
                     submitButton.textContent = originalButtonText;
                 });
         } else {
-            // Fallback if EmailJS is not configured
-            console.warn('EmailJS not configured. Please set up EmailJS credentials.');
-            console.log('Form submission data:', templateParams);
-            
-            // Show message that email functionality needs to be configured
-            alert('Email service is not configured. Please contact us directly at info@regalpartyrentals.ca or (250) 555-1234');
-            
-            // Re-enable submit button
+            console.warn('EmailJS not loaded yet. Please try again in a moment.');
+            alert('Email service is loading. Please try again in a moment or contact us directly at info@regalpartyrentals.ca');
             submitButton.disabled = false;
             submitButton.textContent = originalButtonText;
         }
@@ -401,28 +451,18 @@ const observerOptions = {
     rootMargin: '0px 0px -50px 0px'
 };
 
-const observer = new IntersectionObserver(function(entries) {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('fade-in-up');
-            // Optionally stop observing after animation
-            observer.unobserve(entry.target);
-        }
-    });
-}, observerOptions);
+// Use combined observer instead of separate one
 
 // Enhanced scroll animations with stagger effect
 document.addEventListener('DOMContentLoaded', function() {
-    // Animate cards with stagger
+    // Animate cards with stagger (using combined observer)
     const cards = document.querySelectorAll('.card, .location-card, .review-card, .feature-icon');
     cards.forEach((card, index) => {
         card.style.opacity = '0';
         card.style.transform = 'translateY(30px)';
         card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-        observer.observe(card);
-        
-        // Add stagger delay
         card.setAttribute('data-delay', index * 0.1);
+        combinedObserver.observe(card);
     });
     
     // Animate headings and paragraphs
@@ -430,7 +470,8 @@ document.addEventListener('DOMContentLoaded', function() {
     headings.forEach((heading, index) => {
         heading.style.opacity = '0';
         heading.style.transform = 'translateY(20px)';
-        observer.observe(heading);
+        heading.setAttribute('data-delay', index * 0.05);
+        combinedObserver.observe(heading);
     });
     
     // Set minimum date for event date input to today
@@ -475,28 +516,32 @@ function initScrollProgress() {
     window.addEventListener('resize', updateProgress);
 }
 
-// Enhanced intersection observer with stagger
-const enhancedObserver = new IntersectionObserver(function(entries) {
+// Combined intersection observer for all animations (reduces main-thread work)
+const combinedObserver = new IntersectionObserver(function(entries) {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            const delay = entry.target.getAttribute('data-delay') || 0;
-            setTimeout(() => {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }, delay * 1000);
-            enhancedObserver.unobserve(entry.target);
+            const delay = parseFloat(entry.target.getAttribute('data-delay')) || 0;
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, delay * 100);
+            });
+            combinedObserver.unobserve(entry.target);
         }
     });
 }, {
     threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
+    rootMargin: '0px 0px -50px 0px'
 });
 
-// Re-observe elements with enhanced observer
+// Observe all animated elements with single observer
 document.addEventListener('DOMContentLoaded', function() {
     const animatedElements = document.querySelectorAll('.card, .location-card, .review-card, h2.display-4');
     animatedElements.forEach(el => {
-        enhancedObserver.observe(el);
+        if (!el.classList.contains('fade-in-up')) {
+            combinedObserver.observe(el);
+        }
     });
 });
 
@@ -567,77 +612,29 @@ document.addEventListener('DOMContentLoaded', function() {
 function initParallaxEffect() {
     const heroSection = document.querySelector('.hero-section');
     if (!heroSection) return;
+    
     // Respect user preference for reduced motion
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    // Disable parallax on small screens
+    // Disable parallax on small screens to reduce main-thread work
     if (window.innerWidth <= 768) return;
 
-    // Scroll parallax (throttled)
+    // Simplified scroll parallax (reduced complexity)
+    let lastScrollY = 0;
     window.addEventListener('scroll', throttleRAF(function() {
         const scrolled = window.pageYOffset;
-        const heroContent = document.querySelector('.hero-overlay');
+        if (Math.abs(scrolled - lastScrollY) < 10) return; // Skip if minimal scroll
+        lastScrollY = scrolled;
         
+        const heroContent = document.querySelector('.hero-overlay');
         if (heroContent && scrolled < window.innerHeight) {
-            heroContent.style.transform = `translateY(${scrolled * 0.5}px)`;
-            heroContent.style.opacity = 1 - (scrolled / window.innerHeight) * 0.5;
-            
-            // Parallax for decorative elements
-            const decorations = document.querySelectorAll('.floating-tent, .floating-swirl, .floating-shape');
-            decorations.forEach((el, index) => {
-                const speed = (index % 3 + 1) * 0.1;
-                el.style.transform = `translateY(${scrolled * speed}px)`;
-            });
+            heroContent.style.transform = `translateY(${scrolled * 0.3}px)`;
+            heroContent.style.opacity = 1 - (scrolled / window.innerHeight) * 0.3;
         }
     }));
     
-    // Mouse movement parallax for floating elements (desktop only)
-    if (window.innerWidth > 768) {
-        let mouseX = 0, mouseY = 0;
-        let targetX = 0, targetY = 0;
-        // Only enable mouse parallax if user hasn't requested reduced motion
-        if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            heroSection.addEventListener('mousemove', function(e) {
-                const rect = heroSection.getBoundingClientRect();
-                targetX = ((e.clientX - rect.left) / rect.width - 0.5) * 30;
-                targetY = ((e.clientY - rect.top) / rect.height - 0.5) * 30;
-            });
-        }
-        
-        // Smooth interpolation for mouse movement
-        function updateMouseParallax() {
-            mouseX += (targetX - mouseX) * 0.1;
-            mouseY += (targetY - mouseY) * 0.1;
-            
-            const tents = document.querySelectorAll('.floating-tent');
-            const swirls = document.querySelectorAll('.floating-swirl');
-            const shapes = document.querySelectorAll('.floating-shape');
-            
-            tents.forEach((tent, index) => {
-                const speed = (index + 1) * 0.3;
-                tent.style.transform = `translate(${mouseX * speed}px, ${mouseY * speed}px)`;
-            });
-            
-            swirls.forEach((swirl, index) => {
-                const speed = (index + 1) * 0.2;
-                swirl.style.transform = `translate(${mouseX * speed * -1}px, ${mouseY * speed * -1}px)`;
-            });
-            
-            shapes.forEach((shape, index) => {
-                const speed = (index + 1) * 0.25;
-                shape.style.transform = `translate(${mouseX * speed * 0.5}px, ${mouseY * speed * 0.5}px)`;
-            });
-            
-            requestAnimationFrame(updateMouseParallax);
-        }
-        updateMouseParallax();
-        
-        // Reset on mouse leave
-        heroSection.addEventListener('mouseleave', function() {
-            targetX = 0;
-            targetY = 0;
-        });
-    }
+    // Disable mouse parallax to reduce main-thread work (can be re-enabled if needed)
+    // Mouse parallax removed for performance optimization
 }
 
 // ===================================

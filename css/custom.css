@@ -1602,31 +1602,40 @@ section[id] {
     }
 }
 
-/* GPU acceleration for better performance */
+/* GPU acceleration for better performance (optimized - only when animating) */
 .floating-tent,
 .floating-swirl,
 .floating-shape,
 .sparkle {
-    will-change: transform;
     transform: translateZ(0);
     backface-visibility: hidden;
-    perspective: 1000px;
 }
 
-/* Optimize decorative elements on mobile */
+/* Only use will-change when element is actually animating (reduces main-thread work) */
+.floating-tent:not([style*="display: none"]),
+.floating-swirl:not([style*="display: none"]) {
+    will-change: transform;
+}
+
+/* Optimize decorative elements on mobile - reduce animations */
 @media (max-width: 768px) {
     .floating-tent,
     .floating-swirl {
-        opacity: 0.05;
-        animation-duration: 30s !important;
+        opacity: 0.03 !important;
+        animation-duration: 40s !important;
+        animation-timing-function: linear !important;
     }
     
     .floating-shape {
-        display: none;
+        display: none !important;
     }
     
     .sparkle {
-        animation-duration: 4s !important;
+        display: none !important;
+    }
+    
+    .hero-decorations {
+        opacity: 0.5 !important;
     }
 }
 
@@ -1660,28 +1669,12 @@ section[id] {
     .navbar-logo-svg {
         animation: logoFadeIn 0.01ms ease-out forwards !important;
     }
-}
-
-/* GPU acceleration for better performance */
-.floating-tent,
-.floating-swirl,
-.floating-shape,
-.sparkle {
-    will-change: transform;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000px;
-}
-
-/* Optimize decorative elements on mobile */
-@media (max-width: 768px) {
-    .floating-tent,
-    .floating-swirl {
-        opacity: 0.05 !important;
-    }
     
-    .floating-shape {
-        display: none !important;
+    .floating-tent,
+    .floating-swirl,
+    .floating-shape,
+    .sparkle {
+        animation: none !important;
     }
 }
 
