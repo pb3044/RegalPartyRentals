@@ -37,35 +37,24 @@
     <!-- Favicon  -->
     <link rel="icon" type="image/png" href="images/Logo-Regal.png">
     
-    <!-- Resource Hints for Third-Party Domains -->
-    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <!-- Bootstrap 5 CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Bootstrap 5 CSS (async load to prevent render-blocking) -->
-    <link rel="preload" href="css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/bootstrap.min.css"></noscript>
-    
-    <!-- Bootstrap Icons (async load to prevent render-blocking) -->
-    <link rel="preload" href="css/bootstrap-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/bootstrap-icons.css"></noscript>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="css/bootstrap-icons.css">
     
     <!-- Google Fonts - Elegant Typography -->
     <!-- Local fonts (preloaded for performance) -->
     <link rel="preload" href="fonts/playfair-display-400.ttf" as="font" type="font/ttf" crossorigin="anonymous">
     <link rel="preload" href="fonts/poppins-300.ttf" as="font" type="font/ttf" crossorigin="anonymous">
-    <link rel="preload" href="css/local-fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="css/local-fonts.css" as="style" onload="this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="css/local-fonts.css"></noscript>
     
-    <!-- Custom CSS (minified, async load to prevent render-blocking) -->
-    <link rel="preload" href="css/custom.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/custom.min.css"></noscript>
-    
-    <!-- LoadCSS polyfill for browsers that don't support preload -->
-    <script>
-    !function(e){"use strict";var t=function(t,n,o){var i,r=e.document,a=r.createElement("link");if(n)i=n;else{var l=(r.body||r.getElementsByTagName("head")[0]).childNodes;i=l[l.length-1]}var d=r.styleSheets;a.rel="stylesheet",a.href=t,a.media="only x",function e(t){if(r.body)return t();setTimeout(function(){e(t)})}(function(){i.parentNode.insertBefore(a,n?i:i.nextSibling)});var f=function(e){for(var t=a.href,n=d.length;n--;)if(d[n].href===t)return e();setTimeout(function(){f(e)})};return a.addEventListener&&a.addEventListener("load",function(){this.media=o||"all"}),a.onloadcssdefined=f,f(function(){a.media!==o&&(a.media=o||"all")}),a};"undefined"!=typeof exports?exports.loadCSS=t:e.loadCSS=t}("undefined"!=typeof global?global:this);
-    </script>
+    <!-- Critical CSS (non-blocking) -->
+    <link rel="preload" href="css/custom.css" as="style" onload="this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="css/custom.css"></noscript>
     <!-- Preload hero image (largest) for faster LCP -->
-    <link rel="preload" as="image" href="images/hero-wedding-table-1920.webp" fetchpriority="high">
+    <link rel="preload" as="image" href="images/hero-wedding-table-1920.webp">
     
     <!-- Local Business Schema Markup -->
         <!-- Critical inline CSS for above-the-fold (hero) to improve LCP -->
@@ -1758,10 +1747,7 @@
                 <!-- Wedding Tents -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm">
-                        <picture>
-                            <source type="image/webp" srcset="images/wedding-tent.webp">
-                            <img src="images/wedding-tent.jpg" class="card-img-top" alt="Wedding Tent Rentals Surrey BC" loading="lazy" onerror="this.style.display='none'">
-                        </picture>
+                        <img src="images/wedding-tent.jpg" class="card-img-top" alt="Wedding Tent Rentals Surrey BC" loading="lazy" onerror="this.style.display='none'">
                         <div class="card-body">
                             <h3 class="card-title h4">Wedding Tent Rentals</h3>
                             <p class="card-text">Create the perfect backdrop for your Lower Mainland or Vancouver Island wedding with our elegant tent rentals. From intimate ceremonies to grand receptions of 300+ guests.</p>
@@ -1773,10 +1759,7 @@
                 <!-- Corporate Events -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm">
-                        <picture>
-                            <source type="image/webp" srcset="images/corporate-tent.webp">
-                            <img src="images/corporate-tent.jpg" class="card-img-top" alt="Corporate Event Tent Rentals Vancouver BC" loading="lazy" onerror="this.style.display='none'">
-                        </picture>
+                        <img src="images/corporate-tent.jpg" class="card-img-top" alt="Corporate Event Tent Rentals Vancouver BC" loading="lazy" onerror="this.style.display='none'">
                         <div class="card-body">
                             <h3 class="card-title h4">Corporate Events</h3>
                             <p class="card-text">Professional tent solutions for conferences, team building events, and customer appreciation gatherings throughout the Lower Mainland.</p>
@@ -1788,10 +1771,7 @@
                 <!-- Private Functions -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm">
-                        <picture>
-                            <source type="image/webp" srcset="images/private-event.webp">
-                            <img src="images/private-event.jpg" class="card-img-top" alt="Private Event Tent Rentals BC" loading="lazy" onerror="this.style.display='none'">
-                        </picture>
+                        <img src="images/private-event.jpg" class="card-img-top" alt="Private Event Tent Rentals BC" loading="lazy" onerror="this.style.display='none'">
                         <div class="card-body">
                             <h3 class="card-title h4">Private Functions</h3>
                             <p class="card-text">Perfect for birthday parties, anniversaries, family reunions, and any special occasion across Metro Vancouver, Surrey, North Vancouver, Langley, Coquitlam, and Vancouver Island.</p>
@@ -1803,10 +1783,7 @@
                 <!-- Festival & Production -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm">
-                        <picture>
-                            <source type="image/webp" srcset="images/festival-tent.webp">
-                            <img src="images/festival-tent.jpg" class="card-img-top" alt="Festival Tent Rentals BC" loading="lazy" onerror="this.style.display='none'">
-                        </picture>
+                        <img src="images/festival-tent.jpg" class="card-img-top" alt="Festival Tent Rentals BC" loading="lazy" onerror="this.style.display='none'">
                         <div class="card-body">
                             <h3 class="card-title h4">Festivals & Productions</h3>
                             <p class="card-text">Large-scale tent solutions for festivals, food vendors, and production crews throughout British Columbia.</p>
@@ -1818,10 +1795,7 @@
                 <!-- Industrial -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm">
-                        <picture>
-                            <source type="image/webp" srcset="images/industrial-tent.webp">
-                            <img src="images/industrial-tent.jpg" class="card-img-top" alt="Industrial Tent Rentals BC" loading="lazy" onerror="this.style.display='none'">
-                        </picture>
+                        <img src="images/industrial-tent.jpg" class="card-img-top" alt="Industrial Tent Rentals BC" loading="lazy" onerror="this.style.display='none'">
                         <div class="card-body">
                             <h3 class="card-title h4">Industrial & Construction</h3>
                             <p class="card-text">Durable construction tents to protect work sites from the elements, available for short or long-term rental across BC.</p>
@@ -1833,10 +1807,7 @@
                 <!-- Additional Rentals -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm">
-                        <picture>
-                            <source type="image/webp" srcset="images/Chairs.webp">
-                            <img src="images/Chairs.jpeg" class="card-img-top" alt="Tables and chair rentals for BC events" loading="lazy" onerror="this.style.display='none'">
-                        </picture>
+                        <img src="images/Chairs.jpeg" class="card-img-top" alt="Tables and chair rentals for BC events" loading="lazy" onerror="this.style.display='none'">
                         <div class="card-body">
                             <h3 class="card-title h4">Additional Rentals</h3>
                             <p class="card-text">Tables, chairs, lighting, heating, drapery, flooring, and more to complete your event in Surrey, North Vancouver, Langley, Coquitlam, Metro Vancouver, and Vancouver Island.</p>
@@ -2278,13 +2249,14 @@
         </div>
     </footer>
     
-    <!-- Bootstrap JS Bundle (deferred) -->
-    <script src="js/bootstrap.bundle.min.js" defer></script>
+    <!-- Bootstrap JS Bundle -->
+    <script src="js/bootstrap.bundle.min.js"></script>
     
-    <!-- Custom JS (minified, deferred) -->
-    <script src="js/script.min.js" defer></script>
+    <!-- EmailJS for contact form email sending -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     
-    <!-- EmailJS will be loaded lazily when contact form is visible -->
+    <!-- Custom JS -->
+    <script src="js/script.js"></script>
 
     <!-- Service Worker registration for offline caching -->
     <script>
