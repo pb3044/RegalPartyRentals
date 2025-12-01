@@ -865,3 +865,31 @@ function formatRelativeTime(timestamp) {
 /*
 <script src="https://widget.reviewsonmywebsite.com/widget.js?business_id=YOUR_BUSINESS_ID"></script>
 */
+
+// ===================================
+// Scroll to Top Button Functionality
+// ===================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    const scrollTopButton = document.getElementById('scroll-top');
+    
+    if (scrollTopButton) {
+        // Show/hide button based on scroll position
+        window.addEventListener('scroll', throttleRAF(function() {
+            if (window.pageYOffset > 300) {
+                scrollTopButton.classList.add('active');
+            } else {
+                scrollTopButton.classList.remove('active');
+            }
+        }));
+        
+        // Smooth scroll to top when clicked
+        scrollTopButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+});

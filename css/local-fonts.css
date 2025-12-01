@@ -4,28 +4,28 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('../fonts/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQ.ttf') format('truetype');
+  src: url('../fonts/playfair-display-400.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Playfair Display';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('../fonts/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKebukDQ.ttf') format('truetype');
+  src: url('../fonts/playfair-display-600.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Playfair Display';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('../fonts/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKeiukDQ.ttf') format('truetype');
+  src: url('../fonts/playfair-display-700.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Playfair Display';
   font-style: normal;
   font-weight: 900;
   font-display: swap;
-  src: url('../fonts/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKfsukDQ.ttf') format('truetype');
+  src: url('../fonts/playfair-display-900.ttf') format('truetype');
 }
 
 
@@ -35,35 +35,35 @@
   font-style: normal;
   font-weight: 300;
   font-display: swap;
-  src: url('../fonts/pxiByp8kv8JHgFVrLDz8V1s.ttf') format('truetype');
+  src: url('../fonts/poppins-300.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Poppins';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('../fonts/pxiEyp8kv8JHgFVrFJA.ttf') format('truetype');
+  src: url('../fonts/poppins-400.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Poppins';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('../fonts/pxiByp8kv8JHgFVrLGT9V1s.ttf') format('truetype');
+  src: url('../fonts/poppins-500.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Poppins';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('../fonts/pxiByp8kv8JHgFVrLEj6V1s.ttf') format('truetype');
+  src: url('../fonts/poppins-600.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Poppins';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('../fonts/pxiByp8kv8JHgFVrLCz7V1s.ttf') format('truetype');
+  src: url('../fonts/poppins-700.ttf') format('truetype');
 }
 
 

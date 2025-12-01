@@ -1684,3 +1684,113 @@ section[id] {
         display: none !important;
     }
 }
+
+/* ===================================
+   Floating Action Buttons
+   =================================== */
+
+/* WhatsApp Button */
+.btn-whatsapp {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #25D366;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    animation: pulse-whatsapp 2s infinite;
+}
+
+.btn-whatsapp:hover {
+    background-color: #20BA5A;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+}
+
+.btn-whatsapp i {
+    font-size: 20px;
+}
+
+.btn-whatsapp span {
+    font-family: 'Poppins', sans-serif;
+}
+
+@keyframes pulse-whatsapp {
+    0%, 100% {
+        box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+    }
+    50% {
+        box-shadow: 0 4px 20px rgba(37, 211, 102, 0.6);
+    }
+}
+
+/* Scroll to Top Button */
+.scroll-top {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    text-decoration: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 999;
+    box-shadow: 0 4px 12px rgba(10, 37, 64, 0.3);
+}
+
+.scroll-top.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.scroll-top:hover {
+    background-color: var(--primary-dark);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(10, 37, 64, 0.4);
+}
+
+.scroll-top i {
+    font-size: 20px;
+}
+
+/* Responsive adjustments for floating buttons */
+@media (max-width: 768px) {
+    .btn-whatsapp {
+        bottom: 15px;
+        right: 15px;
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+    
+    .btn-whatsapp i {
+        font-size: 18px;
+    }
+    
+    .scroll-top {
+        bottom: 75px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .scroll-top i {
+        font-size: 18px;
+    }
+}
