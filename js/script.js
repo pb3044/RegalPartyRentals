@@ -313,7 +313,7 @@ window.addEventListener('scroll', throttleRAF(function() {
 // ===================================
 
 // EmailJS configuration
-const EMAILJS_SERVICE_ID = 'service_le5bias';
+const EMAILJS_SERVICE_ID = 'service_gbdye75';
 const EMAILJS_TEMPLATE_ID = 'template_g4dpyg9';
 const EMAILJS_PUBLIC_KEY = 'VX5dplNyGfKt_KxxH';
 
