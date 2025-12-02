@@ -314,8 +314,8 @@ window.addEventListener('scroll', throttleRAF(function() {
 
 // EmailJS configuration
 const EMAILJS_SERVICE_ID = 'service_gbdye75';
-const EMAILJS_TEMPLATE_ID = 'template_g4dpyg9';
-const EMAILJS_PUBLIC_KEY = 'VX5dplNyGfKt_KxxH';
+const EMAILJS_TEMPLATE_ID = 'template_b1l2l0a';
+const EMAILJS_PUBLIC_KEY = 'HVQAkQMQb_ea4TWvI';
 
 // Lazy load EmailJS when contact form is visible
 let emailjsLoaded = false;
@@ -330,8 +330,20 @@ function loadEmailJS() {
     script.async = true;
     script.onload = function() {
         if (typeof emailjs !== 'undefined') {
-            emailjs.init(EMAILJS_PUBLIC_KEY);
-            emailjsLoaded = true;
+            try {
+                emailjs.init(EMAILJS_PUBLIC_KEY);
+                console.log('EmailJS initialized successfully with Public Key:', EMAILJS_PUBLIC_KEY);
+                console.log('Service ID:', EMAILJS_SERVICE_ID, 'Template ID:', EMAILJS_TEMPLATE_ID);
+                emailjsLoaded = true;
+                emailjsLoading = false;
+                initContactForm();
+            } catch (error) {
+                console.error('EmailJS initialization error:', error);
+                emailjsLoading = false;
+                initContactForm(); // Still init form for fallback
+            }
+        } else {
+            console.error('EmailJS library not found after loading');
             emailjsLoading = false;
             initContactForm();
         }
@@ -406,6 +418,10 @@ function initContactForm() {
         submitButton.disabled = true;
         submitButton.textContent = 'Sending...';
         
+        // Template parameters for EmailJS
+        // Note: The recipient email (To Email) is configured in the EmailJS dashboard template settings.
+        // If your template uses {{to_email}} variable, it will use the value below.
+        // Otherwise, ensure the "To Email" field in template_b1l2l0a is set to: info@regalpartyrentals.ca
         const templateParams = {
             name: name,
             from_name: name,
@@ -416,25 +432,47 @@ function initContactForm() {
             event_type: eventType || 'Not specified',
             guest_count: guestCount || 'Not specified',
             message: message,
-            to_email: 'info@regalpartyrentals.ca'
+            to_email: 'info@regalpartyrentals.ca'  // Only used if template "To Email" field uses {{to_email}}
         };
         
-        if (emailjsLoaded && typeof emailjs !== 'undefined') {
-            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+        if (emailjsLoaded && typeof emailjs !== 'undefined' && typeof emailjs.send === 'function') {
+            console.log('Sending email with service:', EMAILJS_SERVICE_ID, 'template:', EMAILJS_TEMPLATE_ID);
+            console.log('Template parameters:', templateParams);
+            console.log('Recipient email (to_email):', templateParams.to_email);
+            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams, EMAILJS_PUBLIC_KEY)
                 .then(function(response) {
                     console.log('Email sent successfully!', response.status, response.text);
+                    console.log('Full response:', response);
+                    console.log('Email should be sent to the address configured in EmailJS template:', EMAILJS_TEMPLATE_ID);
                     alert('Thank you for your inquiry! We have received your message and will contact you shortly at ' + email + '.');
                     contactForm.reset();
                     submitButton.disabled = false;
                     submitButton.textContent = originalButtonText;
                 }, function(error) {
                     console.error('Email sending failed:', error);
-                    alert('Sorry, there was an error sending your message. Please try again or contact us directly at info@regalpartyrentals.ca');
+                    console.error('Error details:', {
+                        status: error.status,
+                        text: error.text,
+                        serviceId: EMAILJS_SERVICE_ID,
+                        templateId: EMAILJS_TEMPLATE_ID,
+                        publicKey: EMAILJS_PUBLIC_KEY,
+                        templateParams: templateParams
+                    });
+                    let errorMessage = 'Sorry, there was an error sending your message.';
+                    if (error.text) {
+                        errorMessage += ' Error: ' + error.text;
+                    }
+                    errorMessage += ' Please try again or contact us directly at info@regalpartyrentals.ca';
+                    alert(errorMessage);
                     submitButton.disabled = false;
                     submitButton.textContent = originalButtonText;
                 });
         } else {
-            console.warn('EmailJS not loaded yet. Please try again in a moment.');
+            console.warn('EmailJS not loaded yet. Status:', {
+                emailjsLoaded: emailjsLoaded,
+                emailjsDefined: typeof emailjs !== 'undefined',
+                sendFunction: typeof emailjs !== 'undefined' ? typeof emailjs.send : 'N/A'
+            });
             alert('Email service is loading. Please try again in a moment or contact us directly at info@regalpartyrentals.ca');
             submitButton.disabled = false;
             submitButton.textContent = originalButtonText;
